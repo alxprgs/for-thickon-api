@@ -26,14 +26,18 @@ async def reg(user_data: User_reg) -> JSONResponse:
     if not any(char.isdigit() for char in user_data.password):
         return JSONResponse({"status": False,"error": "В пароле отсутствуют цифры."}, status_code=422)
     token = token_urlsafe(128)
+    csrf_token = token_urlsafe(64)
     try:
         await database["users"].insert_one({
             "login": user_data.login,
             "password": create_hash(user_data.password),
-            "session": token
+            "session": token,
+            "csrf_token": csrf_token,
+            "cart": {}
         })
     except Exception as e:
        return JSONResponse({"status": False, "message": "server error"}, status_code=500)
     response = JSONResponse({"status": True}, status_code=200)
-    response.set_cookie(key="token", value=token, httponly=True,secure=True,samesite="Strict")
+    response.set_cookie(key="token", value=token,secure=True, httponly=True, samesite="None", domain=".prghorse.ru")
+    response.set_cookie(key="csrf_token", value=csrf_token, secure=True,samesite="None", domain=".prghorse.ru")
     return response
