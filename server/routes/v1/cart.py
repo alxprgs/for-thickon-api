@@ -32,7 +32,7 @@ class OrderResponse(BaseModel):
 async def add_to_cart(
     request: Request,
     item: CartItemCreate,
-    csrf_token: str = Depends(verify_csrf_token)
+    
 ):
     user = await get_authenticated_user(request, database)
     
@@ -67,7 +67,7 @@ async def update_cart_item(
     request: Request,
     cart_id: str,
     update_data: CartItemUpdate,
-    csrf_token: str = Depends(verify_csrf_token)
+    
 ):
     validate_cart_id(cart_id)
     user = await get_authenticated_user(request, database)
@@ -95,7 +95,7 @@ async def update_cart_item(
 async def delete_cart_item(
     request: Request,
     cart_id: str,
-    csrf_token: str = Depends(verify_csrf_token)
+    
 ):
     validate_cart_id(cart_id)
     user = await get_authenticated_user(request, database)
@@ -142,7 +142,7 @@ async def get_cart_items(request: Request):
 @router.post("/order", response_model=OrderResponse)
 async def create_order(
     request: Request,
-    csrf_token: str = Depends(verify_csrf_token)
+    
 ):
     user = await get_authenticated_user(request, database)
     cart = user.get("cart", {})
